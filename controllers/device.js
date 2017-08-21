@@ -122,7 +122,14 @@ module.exports.addDevice = function(req, res){
             "message": "Please login to add a new device"
         });
         }
-        device.update({_id: req.body.device_id}, {$set: {admin: req.payload._id, appliance_id: req.body.appliance_id}}, function(err, done) {
+        device.findById(req.body.device_id,function(err,valid_device)
+        { 
+            if(err)
+                return res.json(err);
+            else if(valid_device==null)
+                return res.status(404).json('invalid device id given');
+
+         device.update({_id: req.body.device_id}, {$set: {admin: req.payload._id, appliance_id: req.body.appliance_id}}, function(err, done) {
             if(err) {
                 console.log(req.params.device_id+" "+err+" IS THE ERROR");
                 res.status(401).json({"message" : "Please enter a valid device id"});
@@ -142,6 +149,7 @@ module.exports.addDevice = function(req, res){
 
             res.status(200).json({"message": "Added Successfully"});
         });
+    });
         
 
 
